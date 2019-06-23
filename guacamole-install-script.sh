@@ -357,6 +357,9 @@ mkdir -vp ${LIB_DIR}{extensions,lib} >> $logfile  2>&1
 mkdir -v /usr/share/tomcat/.guacamole/ >> $logfile  2>&1
 
 sleep 1 | echo -e "\nDownloading Guacamole packages for installation...\n" | pv -qL 25; echo -e "\nDownloading Guacamole packages for installation...\n" >> $logfile  2>&1
+echo -e "\nPackage "
+echo -e ${GUACA_URL}source/${GUACA_SERVER}.tar.gz  >> $logfile  2>&1
+
 wget --progress=bar:force ${GUACA_URL}source/${GUACA_SERVER}.tar.gz 2>&1 | progressfilt
 #wget --progress=bar:force ${GUACA_URL}source/${GUACA_CLIENT}.tar.gz 2>&1 | progressfilt
 wget --progress=bar:force ${GUACA_URL}binary/${GUACA_CLIENT}.war -O ${INSTALL_DIR}client/guacamole.war 2>&1 | progressfilt
