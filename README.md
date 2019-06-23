@@ -21,7 +21,7 @@ yum install -y wget
 ```
 Luego debemos de descargar el script usando el Wget :
 ```sh
-wget -q https://github.com/handblack/guacamole/blob/master/guacamole-install-script.sh
+wget -q https://raw.githubusercontent.com/handblack/guacamole/master/guacamole-install-script.sh
 ```
 Ahora tenemos que asignar el atributo de Execute al script :
 ```sh
