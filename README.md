@@ -5,7 +5,7 @@ Este script de instalacion de Guacamole 1.0.0 esta probado en Centos 7 junto con
 El script trabaja en una instalacion limpia de Centos 6/7 e instala Guacuamole 1.0.0 con autenticacion local del usuario.
 
 Las tareas que reealiza son:
-[X]Install Packages dependencies
+-[X]Install Packages dependencies
 [X]Download Guacamole and MySQL Connector packages
 [X]Install Guacamole Server
 [X]Install Guacamole Client
