@@ -5,15 +5,15 @@ Este script de instalacion de Guacamole 1.0.0 esta probado en Centos 7 junto con
 El script trabaja en una instalacion limpia de Centos 6/7 e instala Guacuamole 1.0.0 con autenticacion local del usuario.
 
 Las tareas que reealiza son:
--[X]Install Packages dependencies
-[X]Download Guacamole and MySQL Connector packages
-[X]Install Guacamole Server
-[X]Install Guacamole Client
-[X]Install MySQL Connector
-[X]Configure MariaDB or MySQL
-[X]Configure FirewallD or Iptables
-[X]Setting Tomcat Server
-[X]Generates a Java KeyStore for SSL Support
+- [x] Instala lso paquetes de dependencia
+- [x] Descarga Guacamole y MySQL Connector packages
+- [x] Instala Guacamole Server
+- [x] Instala Guacamole Client
+- [x] Instala MySQL Connector
+- [x] Configura MariaDB o MySQL
+- [x] Configura FirewallD o Iptables
+- [x] Configura Tomcat Server
+- [x] Genera los Java KeyStore para SSL Support
 
 Asumiento que tu estas logueados como **root**, hacer la instalacion de Wget :
 ```sh
