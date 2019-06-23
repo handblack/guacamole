@@ -17,7 +17,7 @@ Las tareas que reealiza son:
 
 Asumiento que tu estas logueados como **root**, hacer la instalacion de Wget :
 ```sh
-yum install -y wget libtool
+yum install -y wget libtool maven
 ```
 Luego debemos de descargar el script usando el Wget :
 ```sh
