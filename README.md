@@ -19,15 +19,20 @@ Asumiento que tu estas logueados como **root**, hacer la instalacion de Wget :
 ```sh
 yum install -y wget
 ```
-Luego debemos de descargar el script usando el Wget :
+Luego debemos de descargar el script usando el Wget la version de 1.0.0 :
 ```sh
-wget -q https://raw.githubusercontent.com/handblack/guacamole/master/guacamole-install-script.sh
+wget -q https://raw.githubusercontent.com/handblack/guacamole/master/guacamole-1.0.0-install-script.sh
 ```
+o tambien puedes usar la vesion de 0.9.14
+```sh
+wget -q https://raw.githubusercontent.com/handblack/guacamole/master/guacamole-0.9.14-install-script.sh
+```
+
 Ahora tenemos que asignar el atributo de Execute al script :
 ```sh
-chmod +x guacamole-install-script.sh
+chmod +x guacamole*
 ```
-Ahora ejecutamos el script  :)
+Ahora ejecutamos el script que hemos descargado  :)
 ```
-./guacamole-install-script.sh
+./guacamole-1.0.0-install-script.sh
 ```
