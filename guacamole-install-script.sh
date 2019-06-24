@@ -1,30 +1,30 @@
 #!/bin/env bash
 ##############################################################
-# El script a sido creado por Eli Fuentes basados en:
+# This script was created by Hernan Dario Nacimiento based on:
 #  http://guacamole.incubator.apache.org/releases/0.9.14/
 #  http://guacamole.incubator.apache.org/doc/0.9.14/gug/
 #  http://guacamole.incubator.apache.org/doc/0.9.14/gug/administration.html
 #  http://nginx.org/en/docs/http/configuring_https_servers.html
 #  http://nginx.org/en/docs/http/ngx_http_spdy_module.html
 #  https://wiki.centos.org/AdditionalResources/Repositories
-# Esta tarea ejecuta los siguietnes script:
-#  Instalando paquetes de dependencia
-#  Descarga Guacamole y MySQL Connector packages
-#  Instalando Guacamole Server
-#  Instalando Guacamole Client
-#  Instalando MySQL Connector
-#  Configurando MariaDB or MySQL
-#  Configurando Tomcat Server
-#  Generando Java KeyStore para SSL Support
-#  Instalando y configurando Nginx Proxy (SPDY enabled)
-#  Generando las autorimas para el certificado SSL
-#  Configurando SELinux para Nginx Proxy
-#  Configurando FirewallD o iptables
+# Task of this script:
+#  Install Packages Dependencies
+#  Download Guacamole and MySQL Connector packages
+#  Install Guacamole Server
+#  Install Guacamole Client
+#  Install MySQL Connector
+#  Configure MariaDB or MySQL
+#  Setting Tomcat Server
+#  Generates a Java KeyStore for SSL Support
+#  Install and Setting Nginx Proxy (SPDY enabled)
+#  Generates a Self-Signed Certificate for SSL Support
+#  Cofigure SELinux for Nginx Proxy
+#  Configure FirewallD or iptables
 ##############################################################
 #####    VARIABLES    ####
 ##########################
 SCRIPT=`basename ${BASH_SOURCE[0]}` #Script File Name
-GUACA_VER="1.0.0"
+GUACA_VER="0.9.14"
 MYSQL_CONNECTOR_VER="5.1.44"
 LIBJPEG_VER="1.5.2"
 SCRIPT_BUILD="3"
@@ -41,8 +41,7 @@ MYSQL_CONNECTOR="mysql-connector-java-${MYSQL_CONNECTOR_VER}"
 MYSQL_PORT="3306"
 GUACA_PORT="4822"
 GUACA_CONF="guacamole.properties"
-GUACA_URL="https://www-us.apache.org/dist/guacamole/${GUACA_VER}/"
-#https://www-us.apache.org/dist/guacamole/1.0.0/source/guacamole-server-1.0.0.tar.gz
+GUACA_URL="http://sourceforge.net/projects/guacamole/files/current/"
 GUACA_SERVER="guacamole-server-${GUACA_VER}" #Source
 #GUACA_CLIENT="guacamole-client-${GUACA_VER}" #Source
 GUACA_CLIENT="guacamole-${GUACA_VER}" #Binary
@@ -312,15 +311,25 @@ if [ $RETVAL -eq 0 ]; then
 else
 	sleep 1 | echo -e "\nIs necessary to install the RPMFusion repositories\nInstalling..."; echo -e "\nIs necessary to install the RPMFusion repositories\nInstalling..." >> $logfile  2>&1
 	rpm -Uvh https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${CENTOS_VER}.noarch.rpm | tee -a $logfile || exit 1
-fi 
+fi
 }
 
 
 yumupdate () {
 sleep 1 | echo -e "\nUpdating CentOS...\n"; echo -e "\nUpdating CentOS...\n" >> $logfile  2>&1
 yum update -y | tee -a $logfile
-# Requerimientos iniciales
-yum install -y libtool maven | tee -a $logfile
+#Actualizando MAVEN con la ultima version
+wget https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz -P /tmp 
+tar xf /tmp/apache-maven-3.6.0-bin.tar.gz -C /opt
+ln -s /opt/apache-maven-3.6.0-bin /opt/maven
+mavenfile = "/etc/profile.d/maven.sh"
+touch $mavenfile
+echo "export JAVA_HOME=/usr/lib/jvm/jre-openjdk" >> $mavenfile
+echo "export M2_HOME=/opt/maven" >> $mavenfile
+echo "export MAVEN_HOME=/opt/maven" >> $mavenfile
+echo "export PATH=${M2_HOME}/bin:${PATH}" >> $mavenfile
+chmod +x $mavenfile
+source $mavenfile
 }
 
 guacamoleinstall () {
@@ -360,9 +369,6 @@ mkdir -vp ${LIB_DIR}{extensions,lib} >> $logfile  2>&1
 mkdir -v /usr/share/tomcat/.guacamole/ >> $logfile  2>&1
 
 sleep 1 | echo -e "\nDownloading Guacamole packages for installation...\n" | pv -qL 25; echo -e "\nDownloading Guacamole packages for installation...\n" >> $logfile  2>&1
-echo -e "\nPackage "
-echo -e "${GUACA_URL}source/${GUACA_SERVER}.tar.gz"  >> $logfile  2>&1
-
 wget --progress=bar:force ${GUACA_URL}source/${GUACA_SERVER}.tar.gz 2>&1 | progressfilt
 #wget --progress=bar:force ${GUACA_URL}source/${GUACA_CLIENT}.tar.gz 2>&1 | progressfilt
 wget --progress=bar:force ${GUACA_URL}binary/${GUACA_CLIENT}.war -O ${INSTALL_DIR}client/guacamole.war 2>&1 | progressfilt
@@ -373,9 +379,9 @@ sleep 1 | echo -e "\nDerompessing Guacamole Server Source...\n" | pv -qL 25; ech
 pv ${GUACA_SERVER}.tar.gz | tar xzf - | tee -a $logfile && rm -f ${GUACA_SERVER}.tar.gz | tee -a $logfile
 mv ${GUACA_SERVER} server | tee -a $logfile
 
-sleep 1 | echo -e "\nDerompessing Guacamole Client Source...\n" | pv -qL 25; echo -e "\nDerompessing Guacamole Client Source...\n" >> $logfile  2>&1
-pv ${GUACA_CLIENT}.tar.gz | tar xzf - | tee -a $logfile && rm -f ${GUACA_CLIENT}.tar.gz | tee -a $logfile
-mv ${GUACA_CLIENT} client | tee -a $logfile
+#sleep 1 | echo -e "\nDerompessing Guacamole Client...\n" | pv -qL 25
+#pv ${GUACA_CLIENT}.tar.gz | tar xzf - | tee -a $logfile && rm -f ${GUACA_CLIENT}.tar.gz | tee -a $logfile
+#mv ${GUACA_CLIENT} client | tee -a $logfile
 
 sleep 1 | echo -e "\nDecrompressing Guacamole JDBC Extension...\n" | pv -qL 25; echo -e "\nDecrompressing Guacamole JDBC Extension...\n" >> $logfile  2>&1
 pv ${GUACA_JDBC}.tar.gz | tar xzf - | tee -a $logfile && rm -f ${GUACA_JDBC}.tar.gz | tee -a $logfile
@@ -391,12 +397,12 @@ make | tee -a $logfile
 sleep 1 && make install | tee -a $logfile
 sleep 1 && ldconfig | tee -a $logfile
 cd ..
- 
-sleep 1 | echo -e "\nCompiling Gucamole Client...\n" | pv -qL 25
-cd client
-mvn package
-cp guacamole/doc/example/guacamole.properties /etc/guacamole/
-cp guacamole/doc/example/user-mapping.xml /etc/guacamole/
+
+# sleep 1 | echo -e "\nCompiling Gucamole Client...\n" | pv -qL 25
+# cd client
+# mvn package
+# cp guacamole/doc/example/guacamole.properties /etc/guacamole/
+# cp guacamole/doc/example/user-mapping.xml /etc/guacamole/
 
 sleep 1 | echo -e "\nCopying Gucamole Client...\n" | pv -qL 25; echo -e "\nCopying Gucamole Client...\n" >> $logfile  2>&1
 cp -v client/guacamole.war ${LIB_DIR}guacamole.war | tee -a $logfile
@@ -675,7 +681,7 @@ if [ $INSTALL_MODE = "interactive" ] || [ $INSTALL_MODE = "silent" ]; then
 	sleep 1 | echo -e "\nTo manage the Guacamole GW go to http://<IP>:8080/${GUACAMOLE_URIPATH}/ or https://<IP>:8443/${GUACAMOLE_URIPATH}/\n" | pv -qL 25; echo -e "\nTo manage the Guacamole GW go to http://<IP>:8080/${GUACAMOLE_URIPATH}/ or https://<IP>:8443/${GUACAMOLE_URIPATH}/\n" >> $logfile  2>&1
 sleep 1 | echo -e "\nThe username and password is: guacadmin\n" | pv -qL 25; echo -e "\nThe username and password is: guacadmin\n" >> $logfile  2>&1
 fi
-sleep 1 | echo -e "\nSi tienes alguna sugerencia por favor escribeme al soporte@miasoftware.net\n" | pv -qL 25; echo -e "\nSi tienes alguna sugerencia por favor escribeme al soporte@miasoftware.net\n" >> $logfile  2>&1
+sleep 1 | echo -e "\nIf you have any suggestions please write to: correo@nacimientohernan.com.ar\n" | pv -qL 25; echo -e "\nIf you have any suggestions please write to: correo@nacimientohernan.com.ar\n" >> $logfile  2>&1
 }
 
 
