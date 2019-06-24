@@ -324,10 +324,10 @@ tar xf /tmp/apache-maven-3.6.0-bin.tar.gz -C /opt
 ln -s /opt/apache-maven-3.6.0-bin /opt/maven
 mavenfile = "/etc/profile.d/maven.sh"
 touch $mavenfile
-echo "export JAVA_HOME=/usr/lib/jvm/jre-openjdk" >> $mavenfile
-echo "export M2_HOME=/opt/maven" >> $mavenfile
-echo "export MAVEN_HOME=/opt/maven" >> $mavenfile
-echo "export PATH=${M2_HOME}/bin:${PATH}" >> $mavenfile
+echo "export JAVA_HOME=/usr/lib/jvm/jre-openjdk" >> $mavenfile 2>&1
+echo "\nexport M2_HOME=/opt/maven" >> $mavenfile 2>&1
+echo "\nexport MAVEN_HOME=/opt/maven" >> $mavenfile 2>&1
+echo "\nexport PATH=${M2_HOME}/bin:${PATH}" >> $mavenfile 2>&1
 chmod +x $mavenfile
 source $mavenfile
 }
