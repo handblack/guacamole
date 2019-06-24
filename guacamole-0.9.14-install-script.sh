@@ -318,6 +318,18 @@ fi
 yumupdate () {
 sleep 1 | echo -e "\nUpdating CentOS...\n"; echo -e "\nUpdating CentOS...\n" >> $logfile  2>&1
 yum update -y | tee -a $logfile
+#Actualizando MAVEN con la ultima version
+wget https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz -P /tmp 
+tar xf /tmp/apache-maven-3.6.0-bin.tar.gz -C /opt
+ln -s /opt/apache-maven-3.6.0-bin /opt/maven
+mavenfile = "/etc/profile.d/maven.sh"
+touch $mavenfile
+echo "export JAVA_HOME=/usr/lib/jvm/jre-openjdk" >> $mavenfile
+echo "export M2_HOME=/opt/maven" >> $mavenfile
+echo "export MAVEN_HOME=/opt/maven" >> $mavenfile
+echo "export PATH=${M2_HOME}/bin:${PATH}" >> $mavenfile
+chmod +x $mavenfile
+source $mavenfile
 }
 
 guacamoleinstall () {
